@@ -26,5 +26,48 @@
     "useTemplate": "Үлгіні пайдалану",
     "sections": "Бөлімдер",
     "noTemplates": "Үлгілер табылмады"
+  },
+  "dashboard": {
+    "title": "Менің іс-шараларым",
+    "createEvent": "Іс-шара жасау",
+    "noEvents": "Сізде әлі іс-шаралар жоқ",
+    "noEventsHint": "Үлгі таңдап, алғашқы шақыруыңызды жасаңыз",
+    "draft": "Жоба",
+    "published": "Жарияланды",
+    "archived": "Мұрағатта",
+    "edit": "Өңдеу",
+    "delete": "Жою",
+    "confirmDelete": "Бұл іс-шараны жоюға сенімдісіз бе?"
+  },
+  "builder": {
+    "title": "Шақыру редакторы",
+    "eventDetails": "Іс-шара мәліметтері",
+    "eventTitle": "Атауы",
+    "eventDate": "Күні",
+    "eventTime": "Уақыты",
+    "venue": "Өтетін орын",
+    "venueAddress": "Мекенжай",
+    "coordinates": "Координаталар",
+    "lat": "Ендік",
+    "lng": "Бойлық",
+    "customization": "Баптау",
+    "heroTitle": "Тақырып",
+    "heroSubtitle": "Қосымша тақырып",
+    "dressCode": "Дресс-код",
+    "media": "Медиа файлдар",
+    "uploadPhotos": "Фото жүктеу",
+    "uploadMusic": "Музыка жүктеу",
+    "kaspiQr": "Сыйлық үшін Kaspi QR",
+    "preview": "Алдын ала қарау",
+    "saving": "Сақталуда...",
+    "saved": "Сақталды",
+    "back": "Артқа"
+  },
+  "newEvent": {
+    "title": "Жаңа іс-шара",
+    "selectTemplate": "Үлгі таңдаңыз",
+    "eventName": "Іс-шара атауы",
+    "eventNamePlaceholder": "Айгерім & Нұрлан тойы",
+    "create": "Жасау"
   }
 }

@@ -26,5 +26,48 @@
     "useTemplate": "Использовать шаблон",
     "sections": "Разделы",
     "noTemplates": "Шаблоны не найдены"
+  },
+  "dashboard": {
+    "title": "Мои мероприятия",
+    "createEvent": "Создать мероприятие",
+    "noEvents": "У вас пока нет мероприятий",
+    "noEventsHint": "Выберите шаблон и создайте своё первое приглашение",
+    "draft": "Черновик",
+    "published": "Опубликовано",
+    "archived": "В архиве",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "confirmDelete": "Вы уверены, что хотите удалить это мероприятие?"
+  },
+  "builder": {
+    "title": "Редактор приглашения",
+    "eventDetails": "Детали мероприятия",
+    "eventTitle": "Название",
+    "eventDate": "Дата",
+    "eventTime": "Время",
+    "venue": "Место проведения",
+    "venueAddress": "Адрес",
+    "coordinates": "Координаты",
+    "lat": "Широта",
+    "lng": "Долгота",
+    "customization": "Настройка",
+    "heroTitle": "Заголовок",
+    "heroSubtitle": "Подзаголовок",
+    "dressCode": "Дресс-код",
+    "media": "Медиа файлы",
+    "uploadPhotos": "Загрузить фото",
+    "uploadMusic": "Загрузить музыку",
+    "kaspiQr": "Kaspi QR для подарков",
+    "preview": "Предпросмотр",
+    "saving": "Сохранение...",
+    "saved": "Сохранено",
+    "back": "Назад"
+  },
+  "newEvent": {
+    "title": "Новое мероприятие",
+    "selectTemplate": "Выберите шаблон",
+    "eventName": "Название мероприятия",
+    "eventNamePlaceholder": "Свадьба Айгерім & Нұрлан",
+    "create": "Создать"
   }
 }
