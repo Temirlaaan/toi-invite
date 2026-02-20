@@ -65,6 +65,11 @@ export default async function DashboardPage() {
               </div>
               <div className="ml-4 flex gap-2">
                 <Button variant="outline" size="sm" asChild>
+                  <Link href={`/dashboard/events/${event.id}/guests`}>
+                    Guests
+                  </Link>
+                </Button>
+                <Button variant="outline" size="sm" asChild>
                   <Link href={`/dashboard/events/${event.id}/edit`}>
                     {t("edit")}
                   </Link>

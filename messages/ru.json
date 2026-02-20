@@ -69,5 +69,33 @@
     "eventName": "Название мероприятия",
     "eventNamePlaceholder": "Свадьба Айгерім & Нұрлан",
     "create": "Создать"
+  },
+  "guests": {
+    "title": "Список гостей",
+    "addGuest": "Добавить гостя",
+    "importCsv": "Импорт CSV",
+    "exportCsv": "Экспорт CSV",
+    "copyLinks": "Копировать ссылки",
+    "name": "Имя",
+    "phone": "Телефон",
+    "status": "Статус",
+    "guestCount": "Гостей",
+    "message": "Сообщение",
+    "link": "Ссылка",
+    "actions": "Действия",
+    "noGuests": "Гостей пока нет",
+    "all": "Все",
+    "confirmed": "Придут",
+    "declined": "Не придут",
+    "maybe": "Не уверены",
+    "pending": "Ожидают",
+    "invited": "Приглашено",
+    "totalGuests": "Всего гостей",
+    "views": "Просмотров",
+    "conversion": "Конверсия",
+    "delete": "Удалить",
+    "copied": "Скопировано!",
+    "importSuccess": "Импортировано гостей",
+    "back": "Назад к мероприятиям"
   }
 }

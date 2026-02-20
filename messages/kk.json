@@ -69,5 +69,33 @@
     "eventName": "Іс-шара атауы",
     "eventNamePlaceholder": "Айгерім & Нұрлан тойы",
     "create": "Жасау"
+  },
+  "guests": {
+    "title": "Қонақтар тізімі",
+    "addGuest": "Қонақ қосу",
+    "importCsv": "CSV импорт",
+    "exportCsv": "CSV экспорт",
+    "copyLinks": "Сілтемелерді көшіру",
+    "name": "Аты",
+    "phone": "Телефон",
+    "status": "Күйі",
+    "guestCount": "Қонақ",
+    "message": "Хабарлама",
+    "link": "Сілтеме",
+    "actions": "Әрекеттер",
+    "noGuests": "Қонақтар әлі жоқ",
+    "all": "Барлығы",
+    "confirmed": "Келеді",
+    "declined": "Келмейді",
+    "maybe": "Белгісіз",
+    "pending": "Күтуде",
+    "invited": "Шақырылды",
+    "totalGuests": "Барлық қонақ",
+    "views": "Қаралым",
+    "conversion": "Конверсия",
+    "delete": "Жою",
+    "copied": "Көшірілді!",
+    "importSuccess": "Қонақтар импортталды",
+    "back": "Іс-шараларға оралу"
   }
 }
