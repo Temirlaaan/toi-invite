@@ -10,6 +10,7 @@ import { GallerySection } from "@/components/invitation/gallery-section";
 import { MapSection } from "@/components/invitation/map-section";
 import { GiftSection } from "@/components/invitation/gift-section";
 import { MusicPlayer } from "@/components/invitation/music-player";
+import { RsvpSection } from "@/components/invitation/rsvp-section";
 import { LanguageSwitcher } from "@/components/invitation/language-switcher";
 
 interface Props {
@@ -157,26 +158,14 @@ export default async function PersonalizedInvitationPage({ params }: Props) {
             );
           case "rsvp":
             return (
-              <section
+              <RsvpSection
                 key={section}
-                className="px-6 py-12 text-center"
-                style={{ backgroundColor: config.theme.secondaryColor + "10" }}
-              >
-                <h2
-                  className="text-xl font-semibold"
-                  style={{ color: config.theme.textColor }}
-                >
-                  RSVP
-                </h2>
-                <p
-                  className="mt-2 text-sm opacity-60"
-                  style={{ color: config.theme.textColor }}
-                >
-                  {locale === "kk"
-                    ? "Жақында қосылады"
-                    : "Скоро будет доступно"}
-                </p>
-              </section>
+                config={config}
+                eventId={event.id}
+                guestToken={token}
+                guestName={guest.name}
+                locale={locale}
+              />
             );
           case "gift":
             return (
