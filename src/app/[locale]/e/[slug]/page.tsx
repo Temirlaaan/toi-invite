@@ -2,15 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import type { TemplateConfig } from "@/types/template";
-import { HeroSection } from "@/components/invitation/hero-section";
-import { DetailsSection } from "@/components/invitation/details-section";
-import { CountdownSection } from "@/components/invitation/countdown-section";
-import { GallerySection } from "@/components/invitation/gallery-section";
-import { MapSection } from "@/components/invitation/map-section";
-import { GiftSection } from "@/components/invitation/gift-section";
+import { InvitationContent } from "@/components/invitation/invitation-content";
+import { Envelope } from "@/components/invitation/envelope";
 import { MusicPlayer } from "@/components/invitation/music-player";
-import { RsvpSection } from "@/components/invitation/rsvp-section";
-import { LanguageSwitcher } from "@/components/invitation/language-switcher";
 
 interface Props {
   params: Promise<{ locale: string; slug: string }>;
@@ -19,10 +13,7 @@ interface Props {
 async function getEvent(slug: string) {
   return prisma.event.findUnique({
     where: { slug, status: "PUBLISHED" },
-    include: {
-      template: true,
-      media: true,
-    },
+    include: { template: true, media: true },
   });
 }
 
@@ -32,21 +23,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!event) return {};
 
   const customization = event.customizationJson as Record<string, unknown>;
-  const title =
-    (customization.heroTitle as string) || event.title;
+  const title = (customization.heroTitle as string) || event.title;
   const description =
-    (customization.heroSubtitle as string) ||
-    `${event.title} — Toi Invite`;
+    (customization.heroSubtitle as string) || `${event.title} — Toi Invite`;
 
   return {
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      siteName: "Toi Invite",
-    },
+    openGraph: { title, description, type: "website", siteName: "Toi Invite" },
   };
 }
 
@@ -57,16 +41,15 @@ export default async function InvitationPage({ params }: Props) {
 
   const config = event.template.configJson as unknown as TemplateConfig;
   const customization = event.customizationJson as Record<string, unknown>;
-
   const photos = event.media.filter((m) => m.type === "PHOTO");
   const musicFile = event.media.find((m) => m.type === "MUSIC");
 
   const s3Endpoint = process.env.S3_ENDPOINT || "http://localhost:9000";
   const s3Bucket = process.env.S3_BUCKET || "toi-invite";
 
-  const musicUrl = event.musicUrl || (musicFile
-    ? `${s3Endpoint}/${s3Bucket}/${musicFile.s3Key}`
-    : null);
+  const musicUrl =
+    event.musicUrl ||
+    (musicFile ? `${s3Endpoint}/${s3Bucket}/${musicFile.s3Key}` : null);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -89,7 +72,7 @@ export default async function InvitationPage({ params }: Props) {
     }),
   };
 
-  return (
+  const content = (
     <div
       className="min-h-screen"
       style={{
@@ -101,90 +84,48 @@ export default async function InvitationPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <LanguageSwitcher locale={locale} />
-
-      {config.sections.map((section) => {
-        switch (section) {
-          case "hero":
-            return (
-              <HeroSection
-                key={section}
-                config={config}
-                customization={customization}
-                title={event.title}
-              />
-            );
-          case "details":
-            return (
-              <DetailsSection
-                key={section}
-                config={config}
-                customization={customization}
-                eventDate={event.eventDate}
-                venueAddress={event.venueAddress}
-                locale={locale}
-              />
-            );
-          case "countdown":
-            return event.eventDate ? (
-              <CountdownSection
-                key={section}
-                config={config}
-                eventDate={event.eventDate.toISOString()}
-                locale={locale}
-              />
-            ) : null;
-          case "gallery":
-            return (
-              <GallerySection
-                key={section}
-                config={config}
-                photos={photos.map((p) => ({
-                  id: p.id,
-                  s3Key: p.s3Key,
-                  originalName: p.originalName,
-                }))}
-                s3Endpoint={s3Endpoint}
-                s3Bucket={s3Bucket}
-              />
-            );
-          case "map":
-            return (
-              <MapSection
-                key={section}
-                config={config}
-                venueAddress={event.venueAddress}
-                venueLat={event.venueLat}
-                venueLng={event.venueLng}
-                locale={locale}
-              />
-            );
-          case "rsvp":
-            return (
-              <RsvpSection
-                key={section}
-                config={config}
-                eventId={event.id}
-                locale={locale}
-              />
-            );
-          case "gift":
-            return (
-              <GiftSection
-                key={section}
-                config={config}
-                kaspiQrUrl={event.kaspiQrUrl}
-                locale={locale}
-              />
-            );
-          default:
-            return null;
-        }
-      })}
-
-      {musicUrl && (
+      <InvitationContent
+        config={config}
+        customization={customization}
+        event={{
+          id: event.id,
+          title: event.title,
+          eventDate: event.eventDate,
+          venueAddress: event.venueAddress,
+          venueLat: event.venueLat,
+          venueLng: event.venueLng,
+          kaspiQrUrl: event.kaspiQrUrl,
+        }}
+        photos={photos.map((p) => ({
+          id: p.id,
+          s3Key: p.s3Key,
+          originalName: p.originalName,
+        }))}
+        s3Endpoint={s3Endpoint}
+        s3Bucket={s3Bucket}
+        locale={locale}
+      />
+      {/* MusicPlayer only shown when no envelope (envelope handles its own audio) */}
+      {!config.hasEnvelope && musicUrl && (
         <MusicPlayer musicUrl={musicUrl} primaryColor={config.theme.primaryColor} />
       )}
     </div>
   );
+
+  if (config.hasEnvelope) {
+    return (
+      <Envelope
+        primaryColor={config.theme.primaryColor}
+        backgroundColor={config.theme.backgroundColor}
+        textColor={config.theme.textColor}
+        title={event.title}
+        musicUrl={musicUrl}
+        locale={locale}
+      >
+        {content}
+      </Envelope>
+    );
+  }
+
+  return content;
 }
