@@ -37,7 +37,23 @@
     "archived": "Мұрағатта",
     "edit": "Өңдеу",
     "delete": "Жою",
-    "confirmDelete": "Бұл іс-шараны жоюға сенімдісіз бе?"
+    "confirmDelete": "Бұл іс-шараны жоюға сенімдісіз бе?",
+    "payments": "Төлемдер"
+  },
+  "publish": {
+    "published": "Жарияланды",
+    "publishFree": "Жариялау",
+    "publishPaid": "Жариялау ({price} ₸)",
+    "processing": "Өңделуде...",
+    "error": "Жариялау қатесі"
+  },
+  "payments": {
+    "title": "Төлем тарихы",
+    "back": "Артқа",
+    "noPayments": "Төлемдер әлі жоқ",
+    "pending": "Күтуде",
+    "completed": "Төленді",
+    "failed": "Қате"
   },
   "builder": {
     "title": "Шақыру редакторы",

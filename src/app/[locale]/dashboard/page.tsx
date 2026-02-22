@@ -28,9 +28,14 @@ export default async function DashboardPage() {
     <div className="mx-auto max-w-4xl px-4 py-12">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t("title")}</h1>
-        <Button asChild>
-          <Link href="/dashboard/events/new">{t("createEvent")}</Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" asChild>
+            <Link href="/dashboard/payments">{t("payments")}</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/dashboard/events/new">{t("createEvent")}</Link>
+          </Button>
+        </div>
       </div>
 
       {events.length === 0 ? (

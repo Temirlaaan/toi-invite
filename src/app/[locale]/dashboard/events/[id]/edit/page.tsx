@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { redirect, notFound } from "next/navigation";
 import { EventBuilder } from "@/components/builder/event-builder";
+import { TEMPLATE_PRICING } from "@/lib/kaspi";
 
 export default async function EditEventPage({
   params,
@@ -36,8 +37,10 @@ export default async function EditEventPage({
       }}
       template={{
         name: event.template.name,
+        category: event.template.category,
         configJson: event.template.configJson as Record<string, unknown>,
       }}
+      price={TEMPLATE_PRICING[event.template.category] ?? 0}
       media={event.media.map((m) => ({
         id: m.id,
         type: m.type,

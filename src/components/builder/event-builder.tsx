@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { updateEventAction } from "@/lib/event-actions";
 import { createMediaAction, deleteMediaAction } from "@/lib/media-actions";
+import { PublishButton } from "./publish-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -35,12 +36,13 @@ interface MediaItem {
 
 interface Props {
   event: EventData;
-  template: { name: string; configJson: Record<string, unknown> };
+  template: { name: string; category: string; configJson: Record<string, unknown> };
   media: MediaItem[];
   locale: string;
+  price: number;
 }
 
-export function EventBuilder({ event, template, media: initialMedia, locale }: Props) {
+export function EventBuilder({ event, template, media: initialMedia, locale, price }: Props) {
   const t = useTranslations("builder");
   const config = template.configJson as unknown as TemplateConfig;
 
@@ -188,9 +190,15 @@ export function EventBuilder({ event, template, media: initialMedia, locale }: P
                   ? t("saved")
                   : ""}
             </span>
-            <Button onClick={save} size="sm">
+            <Button onClick={save} size="sm" variant="outline">
               {t("saved")}
             </Button>
+            <PublishButton
+              eventId={event.id}
+              status={event.status}
+              templateCategory={template.category}
+              price={price}
+            />
           </div>
         </div>
 
