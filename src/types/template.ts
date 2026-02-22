@@ -5,7 +5,8 @@ export type SectionType =
   | "gallery"
   | "map"
   | "rsvp"
-  | "gift";
+  | "gift"
+  | "timeline";
 
 export interface TemplateTheme {
   primaryColor: string;
@@ -52,4 +53,7 @@ export interface TemplateConfig {
   theme: TemplateTheme;
   fields: TemplateFields;
   layout: LayoutType;
+  hasEnvelope?: boolean;
+  animationStyle?: "fade" | "slide" | "scale" | "none";
+  heroVideoSupport?: boolean;
 }

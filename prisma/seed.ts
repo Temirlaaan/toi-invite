@@ -20,6 +20,9 @@ const classicWedding: TemplateConfig = {
     gift: { kaspiQr: true },
   },
   layout: "scroll-vertical",
+  hasEnvelope: true,
+  animationStyle: "fade",
+  heroVideoSupport: false,
 };
 
 const modernWedding: TemplateConfig = {
@@ -33,17 +36,15 @@ const modernWedding: TemplateConfig = {
     accentFont: "Cormorant Garamond",
   },
   fields: {
-    hero: {
-      backgroundImage: true,
-      title: true,
-      subtitle: true,
-      overlay: false,
-    },
+    hero: { backgroundImage: true, title: true, subtitle: true, overlay: false },
     details: { date: true, time: true, venue: true, dressCode: false },
     gallery: { maxPhotos: 8 },
     gift: { kaspiQr: true },
   },
   layout: "scroll-vertical",
+  hasEnvelope: true,
+  animationStyle: "slide",
+  heroVideoSupport: false,
 };
 
 const minimalWedding: TemplateConfig = {
@@ -56,76 +57,151 @@ const minimalWedding: TemplateConfig = {
     fontFamily: "DM Sans",
   },
   fields: {
-    hero: {
-      backgroundImage: false,
-      title: true,
-      subtitle: true,
-      overlay: false,
-    },
+    hero: { backgroundImage: false, title: true, subtitle: true, overlay: false },
     details: { date: true, time: true, venue: true, dressCode: false },
     gallery: { maxPhotos: 6 },
     gift: { kaspiQr: false },
   },
   layout: "scroll-vertical",
+  hasEnvelope: false,
+  animationStyle: "fade",
+  heroVideoSupport: false,
 };
+
+const nationalWedding: TemplateConfig = {
+  sections: ["hero", "details", "countdown", "gallery", "map", "rsvp", "gift"],
+  theme: {
+    primaryColor: "#1B6B4A",
+    secondaryColor: "#D4A843",
+    backgroundColor: "#FFFEF5",
+    textColor: "#2C3E2D",
+    fontFamily: "Noto Serif",
+    accentFont: "Playfair Display",
+  },
+  fields: {
+    hero: { backgroundImage: true, title: true, subtitle: true, overlay: true },
+    details: { date: true, time: true, venue: true, dressCode: true },
+    gallery: { maxPhotos: 16 },
+    gift: { kaspiQr: true },
+  },
+  layout: "scroll-vertical",
+  hasEnvelope: true,
+  animationStyle: "scale",
+  heroVideoSupport: false,
+};
+
+const kidsParty: TemplateConfig = {
+  sections: ["hero", "details", "countdown", "timeline", "gallery", "map", "rsvp", "gift"],
+  theme: {
+    primaryColor: "#6C63FF",
+    secondaryColor: "#FF6B9D",
+    backgroundColor: "#FFF5F9",
+    textColor: "#2D2B55",
+    fontFamily: "Nunito",
+    accentFont: "Baloo 2",
+  },
+  fields: {
+    hero: { backgroundImage: true, title: true, subtitle: true, overlay: false },
+    details: { date: true, time: true, venue: true, dressCode: false },
+    gallery: { maxPhotos: 10 },
+    gift: { kaspiQr: true },
+  },
+  layout: "scroll-vertical",
+  hasEnvelope: false,
+  animationStyle: "slide",
+  heroVideoSupport: false,
+};
+
+const cinematic: TemplateConfig = {
+  sections: ["hero", "details", "countdown", "gallery", "map", "rsvp", "gift"],
+  theme: {
+    primaryColor: "#C9A84C",
+    secondaryColor: "#8B7D3C",
+    backgroundColor: "#0D0D0D",
+    textColor: "#F5F5F5",
+    fontFamily: "Montserrat",
+    accentFont: "Cinzel",
+  },
+  fields: {
+    hero: { backgroundImage: true, title: true, subtitle: true, overlay: true },
+    details: { date: true, time: true, venue: true, dressCode: true },
+    gallery: { maxPhotos: 12 },
+    gift: { kaspiQr: true },
+  },
+  layout: "scroll-vertical",
+  hasEnvelope: true,
+  animationStyle: "fade",
+  heroVideoSupport: true,
+};
+
+const templates = [
+  {
+    name: "Classic Elegance",
+    slug: "classic-wedding",
+    eventType: "WEDDING" as const,
+    category: "PREMIUM" as const,
+    config: classicWedding,
+  },
+  {
+    name: "Modern Love",
+    slug: "modern-wedding",
+    eventType: "WEDDING" as const,
+    category: "STANDARD" as const,
+    config: modernWedding,
+  },
+  {
+    name: "Minimal & Clean",
+    slug: "minimal-wedding",
+    eventType: "WEDDING" as const,
+    category: "FREE" as const,
+    config: minimalWedding,
+  },
+  {
+    name: "Ұлттық / National",
+    slug: "national-wedding",
+    eventType: "WEDDING" as const,
+    category: "PREMIUM" as const,
+    config: nationalWedding,
+  },
+  {
+    name: "Kids Party / Timeline",
+    slug: "kids-party",
+    eventType: "KIDS" as const,
+    category: "STANDARD" as const,
+    config: kidsParty,
+  },
+  {
+    name: "Cinematic",
+    slug: "cinematic",
+    eventType: "WEDDING" as const,
+    category: "PREMIUM" as const,
+    config: cinematic,
+  },
+];
 
 async function main() {
   console.log("Seeding templates...");
 
-  await prisma.template.upsert({
-    where: { slug: "classic-wedding" },
-    update: { configJson: classicWedding as unknown as Record<string, unknown> },
-    create: {
-      name: "Classic Elegance",
-      slug: "classic-wedding",
-      eventType: "WEDDING",
-      category: "PREMIUM",
-      configJson: classicWedding as unknown as Record<string, unknown>,
-      thumbnailUrl: "/templates/classic-wedding-thumb.jpg",
-      previewImages: [
-        "/templates/classic-wedding-1.jpg",
-        "/templates/classic-wedding-2.jpg",
-      ],
-    },
-  });
+  for (const t of templates) {
+    await prisma.template.upsert({
+      where: { slug: t.slug },
+      update: { configJson: t.config as unknown as Record<string, unknown> },
+      create: {
+        name: t.name,
+        slug: t.slug,
+        eventType: t.eventType,
+        category: t.category,
+        configJson: t.config as unknown as Record<string, unknown>,
+        thumbnailUrl: `/templates/${t.slug}-thumb.jpg`,
+        previewImages: [
+          `/templates/${t.slug}-1.jpg`,
+          `/templates/${t.slug}-2.jpg`,
+        ],
+      },
+    });
+  }
 
-  await prisma.template.upsert({
-    where: { slug: "modern-wedding" },
-    update: { configJson: modernWedding as unknown as Record<string, unknown> },
-    create: {
-      name: "Modern Love",
-      slug: "modern-wedding",
-      eventType: "WEDDING",
-      category: "STANDARD",
-      configJson: modernWedding as unknown as Record<string, unknown>,
-      thumbnailUrl: "/templates/modern-wedding-thumb.jpg",
-      previewImages: [
-        "/templates/modern-wedding-1.jpg",
-        "/templates/modern-wedding-2.jpg",
-      ],
-    },
-  });
-
-  await prisma.template.upsert({
-    where: { slug: "minimal-wedding" },
-    update: {
-      configJson: minimalWedding as unknown as Record<string, unknown>,
-    },
-    create: {
-      name: "Minimal & Clean",
-      slug: "minimal-wedding",
-      eventType: "WEDDING",
-      category: "FREE",
-      configJson: minimalWedding as unknown as Record<string, unknown>,
-      thumbnailUrl: "/templates/minimal-wedding-thumb.jpg",
-      previewImages: [
-        "/templates/minimal-wedding-1.jpg",
-        "/templates/minimal-wedding-2.jpg",
-      ],
-    },
-  });
-
-  console.log("✅ Seeded 3 wedding templates");
+  console.log(`✅ Seeded ${templates.length} templates`);
 }
 
 main()

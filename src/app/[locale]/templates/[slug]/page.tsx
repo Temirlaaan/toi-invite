@@ -14,6 +14,7 @@ const SECTION_LABELS: Record<SectionType, { ru: string; kk: string }> = {
   map: { ru: "Карта", kk: "Карта" },
   rsvp: { ru: "RSVP", kk: "RSVP" },
   gift: { ru: "Подарок", kk: "Сыйлық" },
+  timeline: { ru: "Таймлайн", kk: "Уақыт шкаласы" },
 };
 
 const CATEGORY_VARIANT: Record<string, "default" | "secondary" | "outline"> = {
