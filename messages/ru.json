@@ -128,6 +128,7 @@
     "guestCount": "Гостей",
     "message": "Сообщение",
     "link": "Ссылка",
+    "table": "Стол",
     "actions": "Действия",
     "noGuests": "Гостей пока нет",
     "all": "Все",
@@ -143,6 +144,16 @@
     "copied": "Скопировано!",
     "importSuccess": "Импортировано гостей",
     "back": "Назад к мероприятиям"
+  },
+  "resetPassword": {
+    "title": "Сброс пароля",
+    "description": "Введите email для получения ссылки на сброс",
+    "sendLink": "Отправить ссылку",
+    "backToSignIn": "Вернуться к ",
+    "newPasswordTitle": "Новый пароль",
+    "newPasswordDesc": "Введите новый пароль для вашего аккаунта",
+    "newPassword": "Новый пароль",
+    "setPassword": "Установить пароль"
   },
   "errors": {
     "notFound": "Страница не найдена",

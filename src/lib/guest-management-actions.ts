@@ -61,6 +61,22 @@ export async function deleteGuestAction(guestId: string, eventId: string) {
   return { success: true };
 }
 
+export async function updateGuestTableAction(data: {
+  guestId: string;
+  eventId: string;
+  tableNumber: number | null;
+}) {
+  const event = await verifyEventOwnership(data.eventId);
+  if (!event) return { error: "Event not found" };
+
+  await prisma.guest.update({
+    where: { id: data.guestId },
+    data: { tableNumber: data.tableNumber },
+  });
+
+  return { success: true };
+}
+
 export async function getGuestsWithRsvp(eventId: string) {
   const event = await verifyEventOwnership(eventId);
   if (!event) return [];
@@ -128,13 +144,14 @@ export async function exportGuestsCsv(eventId: string, appUrl: string) {
     orderBy: { createdAt: "asc" },
   });
 
-  const header = "Name,Phone,RSVP Status,Guest Count,Message,Link";
+  const header = "Name,Phone,RSVP Status,Guest Count,Table,Message,Link";
   const rows = guests.map((g) => {
     const status = g.rsvp?.status ?? "PENDING";
     const count = g.rsvp?.guestCount ?? "";
+    const table = g.tableNumber ?? "";
     const message = (g.rsvp?.message ?? "").replace(/"/g, '""');
     const link = `${appUrl}/e/${event.slug}/g/${g.token}`;
-    return `"${g.name}","${g.phone ?? ""}","${status}","${count}","${message}","${link}"`;
+    return `"${g.name}","${g.phone ?? ""}","${status}","${count}","${table}","${message}","${link}"`;
   });
 
   return { csv: [header, ...rows].join("\n") };

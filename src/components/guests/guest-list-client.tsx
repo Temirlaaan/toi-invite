@@ -9,6 +9,7 @@ import {
   bulkImportGuestsAction,
   deleteGuestAction,
   exportGuestsCsv,
+  updateGuestTableAction,
 } from "@/lib/guest-management-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ interface GuestData {
   name: string;
   phone: string | null;
   token: string;
+  tableNumber: number | null;
   viewCount: number;
   createdAt: string;
   rsvp: {
@@ -308,6 +310,7 @@ export function GuestListClient({
                 <th className="px-3 py-2 font-medium">{t("phone")}</th>
                 <th className="px-3 py-2 font-medium">{t("status")}</th>
                 <th className="px-3 py-2 font-medium">{t("guestCount")}</th>
+                <th className="px-3 py-2 font-medium">{t("table")}</th>
                 <th className="px-3 py-2 font-medium">{t("message")}</th>
                 <th className="px-3 py-2 font-medium">{t("views")}</th>
                 <th className="px-3 py-2 font-medium">{t("actions")}</th>
@@ -329,6 +332,23 @@ export function GuestListClient({
                     </td>
                     <td className="px-3 py-2">
                       {guest.rsvp?.guestCount ?? "—"}
+                    </td>
+                    <td className="px-3 py-2">
+                      <input
+                        type="number"
+                        min={1}
+                        className="w-16 rounded border bg-background px-2 py-1 text-center text-sm"
+                        value={guest.tableNumber ?? ""}
+                        placeholder="—"
+                        onChange={async (e) => {
+                          const val = e.target.value ? parseInt(e.target.value) : null;
+                          await updateGuestTableAction({
+                            guestId: guest.id,
+                            eventId,
+                            tableNumber: val,
+                          });
+                        }}
+                      />
                     </td>
                     <td className="max-w-[200px] truncate px-3 py-2 text-muted-foreground">
                       {guest.rsvp?.message || "—"}

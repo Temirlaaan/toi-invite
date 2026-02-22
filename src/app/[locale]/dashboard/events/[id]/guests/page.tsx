@@ -39,6 +39,7 @@ export default async function GuestsPage({
         name: g.name,
         phone: g.phone,
         token: g.token,
+        tableNumber: g.tableNumber,
         viewCount: g.viewCount,
         createdAt: g.createdAt.toISOString(),
         rsvp: g.rsvp
