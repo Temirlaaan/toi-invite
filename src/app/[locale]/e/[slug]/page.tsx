@@ -68,6 +68,27 @@ export default async function InvitationPage({ params }: Props) {
     ? `${s3Endpoint}/${s3Bucket}/${musicFile.s3Key}`
     : null);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: event.title,
+    ...(event.eventDate && { startDate: event.eventDate.toISOString() }),
+    ...(event.venueAddress && {
+      location: {
+        "@type": "Place",
+        name: event.venueAddress,
+        ...(event.venueLat &&
+          event.venueLng && {
+            geo: {
+              "@type": "GeoCoordinates",
+              latitude: event.venueLat,
+              longitude: event.venueLng,
+            },
+          }),
+      },
+    }),
+  };
+
   return (
     <div
       className="min-h-screen"
@@ -76,6 +97,10 @@ export default async function InvitationPage({ params }: Props) {
         fontFamily: config.theme.fontFamily,
       }}
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <LanguageSwitcher locale={locale} />
 
       {config.sections.map((section) => {

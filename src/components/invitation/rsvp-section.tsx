@@ -114,17 +114,21 @@ export function RsvpSection({
           {t.title}
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5" aria-label={t.title}>
           {error && (
-            <p className="text-center text-sm text-red-500">{error}</p>
+            <p className="text-center text-sm text-red-500" role="alert">{error}</p>
           )}
 
           {/* Status selection */}
-          <div className="flex justify-center gap-2">
+          <fieldset>
+            <legend className="sr-only">{t.title}</legend>
+            <div className="flex justify-center gap-2" role="radiogroup">
             {STATUS_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
                 type="button"
+                role="radio"
+                aria-checked={status === opt.value}
                 onClick={() => setStatus(opt.value)}
                 className="rounded-full border px-4 py-2 text-sm font-medium transition-colors"
                 style={
@@ -143,7 +147,8 @@ export function RsvpSection({
                 {locale === "kk" ? opt.kk : opt.ru}
               </button>
             ))}
-          </div>
+            </div>
+          </fieldset>
 
           {/* Name (editable only for anonymous) */}
           {!guestToken && (
