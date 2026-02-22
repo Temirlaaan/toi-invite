@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import { signIn } from "@/auth";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 export async function signUpAction(formData: FormData) {
   const email = formData.get("email") as string;
@@ -55,7 +56,7 @@ export async function signInAction(formData: FormData) {
       redirectTo: callbackUrl,
     });
   } catch (error) {
-    if ((error as Error).message?.includes("NEXT_REDIRECT")) {
+    if (isRedirectError(error)) {
       throw error;
     }
     return { error: "Invalid email or password" };

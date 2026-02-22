@@ -78,7 +78,7 @@ export default async function PersonalizedInvitationPage({ params }: Props) {
 
   const content = (
     <div
-      className="min-h-screen"
+      className="mx-auto min-h-screen max-w-[430px] md:my-8 md:rounded-2xl md:shadow-2xl md:overflow-hidden"
       style={{
         backgroundColor: config.theme.backgroundColor,
         fontFamily: config.theme.fontFamily,

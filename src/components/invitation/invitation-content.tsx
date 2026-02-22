@@ -9,6 +9,7 @@ import { RsvpSection } from "./rsvp-section";
 import { LanguageSwitcher } from "./language-switcher";
 import { AnimatedSection } from "./animated-section";
 import { StickyBar } from "./sticky-bar";
+import { TimelineSection } from "./timeline-section";
 
 interface Props {
   config: TemplateConfig;
@@ -59,6 +60,7 @@ export function InvitationContent({
                 config={config}
                 customization={customization}
                 title={event.title}
+                guestName={guestName}
               />
             );
             break;
@@ -96,6 +98,7 @@ export function InvitationContent({
             node = (
               <MapSection
                 config={config}
+                customization={customization}
                 venueAddress={event.venueAddress}
                 venueLat={event.venueLat}
                 venueLng={event.venueLng}
@@ -110,6 +113,15 @@ export function InvitationContent({
                 eventId={event.id}
                 guestToken={guestToken}
                 guestName={guestName}
+                locale={locale}
+              />
+            );
+            break;
+          case "timeline":
+            node = (
+              <TimelineSection
+                config={config}
+                customization={customization}
                 locale={locale}
               />
             );

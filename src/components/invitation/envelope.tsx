@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Props {
@@ -11,6 +11,59 @@ interface Props {
   musicUrl?: string | null;
   locale: string;
   children: React.ReactNode;
+}
+
+function FloatingParticles({ color }: { color: string }) {
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 12 }, (_, i) => ({
+        id: i,
+        x: Math.random() * 100,
+        delay: Math.random() * 4,
+        duration: 3 + Math.random() * 3,
+        size: 3 + Math.random() * 4,
+      })),
+    []
+  );
+
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {particles.map((p) => (
+        <motion.div
+          key={p.id}
+          className="absolute rounded-full"
+          style={{
+            left: `${p.x}%`,
+            bottom: -10,
+            width: p.size,
+            height: p.size,
+            backgroundColor: color,
+            opacity: 0.3,
+          }}
+          animate={{ y: [0, -600], opacity: [0.3, 0] }}
+          transition={{
+            duration: p.duration,
+            delay: p.delay,
+            repeat: Infinity,
+            ease: "easeOut",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function WaxSeal({ initials, color }: { initials: string; color: string }) {
+  return (
+    <div
+      className="mx-auto flex h-16 w-16 items-center justify-center rounded-full shadow-lg"
+      style={{
+        background: `radial-gradient(circle at 35% 35%, ${color}, ${color}CC)`,
+      }}
+    >
+      <span className="text-lg font-bold text-white">{initials}</span>
+    </div>
+  );
 }
 
 export function Envelope({
@@ -27,11 +80,16 @@ export function Envelope({
 
   const handleOpen = useCallback(() => {
     setOpened(true);
-    // Start music on user interaction — bypasses autoplay restrictions
     if (audioRef.current && musicUrl) {
       audioRef.current.play().catch(() => {});
     }
   }, [musicUrl]);
+
+  const initials = useMemo(() => {
+    const words = title.split(/[\s&+,]+/).filter(Boolean);
+    if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+    return title.slice(0, 2).toUpperCase();
+  }, [title]);
 
   const t = {
     open: locale === "kk" ? "Ашу" : "Открыть",
@@ -51,32 +109,86 @@ export function Envelope({
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.5, ease: "easeInOut" }}
           >
-            {/* Envelope body */}
+            <FloatingParticles color={primaryColor} />
+
             <motion.div
               className="relative w-full max-w-xs"
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
-              {/* Envelope shape */}
               <div
-                className="relative overflow-hidden rounded-lg shadow-2xl"
+                className="relative overflow-hidden rounded-xl shadow-2xl"
                 style={{ border: `2px solid ${primaryColor}30` }}
               >
-                {/* Flap */}
-                <div
-                  className="h-20"
-                  style={{
-                    background: `linear-gradient(135deg, ${primaryColor}20 0%, ${primaryColor}10 100%)`,
-                    clipPath: "polygon(0 0, 50% 70%, 100% 0)",
-                  }}
-                />
+                {/* 3D Envelope flap */}
+                <motion.div
+                  className="relative z-10 origin-top"
+                  style={{ perspective: 800 }}
+                >
+                  <motion.div
+                    className="h-24"
+                    style={{
+                      background: `linear-gradient(135deg, ${primaryColor}25 0%, ${primaryColor}15 100%)`,
+                      clipPath: "polygon(0 0, 50% 80%, 100% 0)",
+                      transformOrigin: "top center",
+                    }}
+                    animate={{ rotateX: [0, 5, 0] }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  />
+                </motion.div>
 
-                {/* Body */}
-                <div className="px-8 pb-8 pt-4 text-center" style={{ backgroundColor }}>
-                  <p className="text-3xl">💌</p>
+                {/* Envelope body */}
+                <div
+                  className="px-8 pb-8 pt-2 text-center"
+                  style={{ backgroundColor }}
+                >
+                  {/* SVG envelope icon */}
+                  <svg
+                    className="mx-auto mb-2"
+                    width="48"
+                    height="48"
+                    viewBox="0 0 48 48"
+                    fill="none"
+                  >
+                    <rect
+                      x="4"
+                      y="12"
+                      width="40"
+                      height="28"
+                      rx="3"
+                      stroke={primaryColor}
+                      strokeWidth="2"
+                      fill={`${primaryColor}10`}
+                    />
+                    <path
+                      d="M4 15L24 30L44 15"
+                      stroke={primaryColor}
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M4 40L18 28"
+                      stroke={primaryColor}
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M44 40L30 28"
+                      stroke={primaryColor}
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+
+                  <WaxSeal initials={initials} color={primaryColor} />
+
                   <p
-                    className="mt-3 text-sm font-medium uppercase tracking-widest opacity-60"
+                    className="mt-4 text-sm font-medium uppercase tracking-widest opacity-60"
                     style={{ color: textColor }}
                   >
                     {t.invitation}
@@ -90,10 +202,23 @@ export function Envelope({
 
                   <motion.button
                     onClick={handleOpen}
-                    className="mt-6 inline-flex h-11 items-center rounded-full px-8 text-sm font-medium text-white shadow-lg"
+                    className="mt-6 inline-flex h-12 items-center rounded-full px-10 text-sm font-medium text-white shadow-lg"
                     style={{ backgroundColor: primaryColor }}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    animate={{
+                      boxShadow: [
+                        `0 0 0 0 ${primaryColor}40`,
+                        `0 0 0 12px ${primaryColor}00`,
+                      ],
+                    }}
+                    transition={{
+                      boxShadow: {
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeOut",
+                      },
+                    }}
                   >
                     {t.open}
                   </motion.button>

@@ -37,6 +37,14 @@ export function DetailsSection({
       ? customization.dressCode
       : null;
 
+  const dressColors =
+    typeof customization.dressColors === "string"
+      ? customization.dressColors
+          .split(",")
+          .map((c: string) => c.trim())
+          .filter(Boolean)
+      : [];
+
   return (
     <section
       className="px-6 py-12 text-center md:py-16"
@@ -53,6 +61,18 @@ export function DetailsSection({
         <p className="mt-4 text-sm italic opacity-70">
           Dress code: {dressCode}
         </p>
+      )}
+      {dressColors.length > 0 && (
+        <div className="mt-3 flex flex-wrap justify-center gap-2">
+          {dressColors.map((color: string, i: number) => (
+            <div
+              key={i}
+              className="h-10 w-10 rounded-full border border-black/10 shadow-sm"
+              style={{ backgroundColor: color }}
+              title={color}
+            />
+          ))}
+        </div>
       )}
     </section>
   );

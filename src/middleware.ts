@@ -15,7 +15,10 @@ export default auth((req) => {
   );
 
   if (pathnameWithoutLocale.startsWith("/dashboard") && !req.auth) {
-    const locale = pathname.split("/")[1] || routing.defaultLocale;
+    const firstSegment = pathname.split("/")[1];
+    const locale = routing.locales.includes(firstSegment as "ru" | "kk")
+      ? firstSegment
+      : routing.defaultLocale;
     const signInUrl = new URL(`/${locale}/auth/signin`, req.url);
     signInUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(signInUrl);
