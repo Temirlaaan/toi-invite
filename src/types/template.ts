@@ -43,7 +43,7 @@ export interface TemplateFields {
   hero: HeroFields;
   details: DetailsFields;
   gallery: GalleryFields;
-  gift: GiftFields;
+  gift?: GiftFields;
 }
 
 export type LayoutType = "scroll-vertical" | "scroll-horizontal" | "paginated";

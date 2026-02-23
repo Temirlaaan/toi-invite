@@ -34,15 +34,24 @@ interface MediaItem {
   originalName: string;
 }
 
+interface TimelineItem {
+  time: string;
+  icon: string;
+  title: string;
+  description: string;
+}
+
 interface Props {
   event: EventData;
   template: { name: string; category: string; configJson: Record<string, unknown> };
   media: MediaItem[];
   locale: string;
   price: number;
+  s3Endpoint?: string;
+  s3Bucket?: string;
 }
 
-export function EventBuilder({ event, template, media: initialMedia, locale, price }: Props) {
+export function EventBuilder({ event, template, media: initialMedia, locale, price, s3Endpoint, s3Bucket }: Props) {
   const t = useTranslations("builder");
   const config = template.configJson as unknown as TemplateConfig;
 
@@ -168,6 +177,89 @@ export function EventBuilder({ event, template, media: initialMedia, locale, pri
     setCustomization((prev) => ({ ...prev, [key]: value }));
   };
 
+  const updateCustomizationValue = (key: string, value: unknown) => {
+    setCustomization((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const timeline = (customization.timeline as TimelineItem[] | undefined) ?? [];
+
+  const addTimelineItem = () => {
+    updateCustomizationValue("timeline", [
+      ...timeline,
+      { time: "", icon: "", title: "", description: "" },
+    ]);
+  };
+
+  const removeTimelineItem = (index: number) => {
+    updateCustomizationValue(
+      "timeline",
+      timeline.filter((_, i) => i !== index)
+    );
+  };
+
+  const updateTimelineItem = (index: number, field: keyof TimelineItem, value: string) => {
+    const updated = timeline.map((item, i) =>
+      i === index ? { ...item, [field]: value } : item
+    );
+    updateCustomizationValue("timeline", updated);
+  };
+
+  const handleSingleFileUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    mediaCategory: "image" | "video",
+    customizationKey: string
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const res = await fetch("/api/media/presign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventId: event.id,
+          fileName: file.name,
+          fileType: file.type,
+          fileSize: file.size,
+          mediaCategory,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || "Upload failed");
+        setUploading(false);
+        return;
+      }
+
+      const { url, key } = await res.json();
+
+      await fetch(url, {
+        method: "PUT",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+
+      const s3Url =
+        s3Endpoint && s3Bucket
+          ? `${s3Endpoint}/${s3Bucket}/${key}`
+          : key;
+      updateCustomization(customizationKey, s3Url);
+    } catch {
+      alert(`Failed to upload ${file.name}`);
+    }
+    setUploading(false);
+    e.target.value = "";
+  };
+
+  const parseDressColors = (value: string): string[] => {
+    return value
+      .split(",")
+      .map((c) => c.trim())
+      .filter((c) => /^#[0-9a-fA-F]{3,8}$/.test(c));
+  };
+
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
       {/* Form Panel */}
@@ -232,6 +324,16 @@ export function EventBuilder({ event, template, media: initialMedia, locale, pri
                   placeholder="Алматы, Almaty Towers"
                 />
               </div>
+              <div className="space-y-2">
+                <Label>{t("venueName")}</Label>
+                <Input
+                  value={(customization.venueName as string) ?? ""}
+                  onChange={(e) =>
+                    updateCustomization("venueName", e.target.value)
+                  }
+                  placeholder="Almaty Towers"
+                />
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>{t("lat")}</Label>
@@ -280,14 +382,136 @@ export function EventBuilder({ event, template, media: initialMedia, locale, pri
                 />
               </div>
               {config.fields.details.dressCode && (
+                <>
+                  <div className="space-y-2">
+                    <Label>{t("dressCode")}</Label>
+                    <Input
+                      value={(customization.dressCode as string) ?? ""}
+                      onChange={(e) =>
+                        updateCustomization("dressCode", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{t("dressColors")}</Label>
+                    <Input
+                      value={(customization.dressColors as string) ?? ""}
+                      onChange={(e) =>
+                        updateCustomization("dressColors", e.target.value)
+                      }
+                      placeholder="#8B7355, #D4C5A9"
+                    />
+                    {(customization.dressColors as string) && (
+                      <div className="flex gap-2 mt-1">
+                        {parseDressColors(customization.dressColors as string).map(
+                          (color, i) => (
+                            <div
+                              key={i}
+                              className="h-6 w-6 rounded-full border"
+                              style={{ backgroundColor: color }}
+                              title={color}
+                            />
+                          )
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+              {config.fields.hero.backgroundImage && (
                 <div className="space-y-2">
-                  <Label>{t("dressCode")}</Label>
+                  <Label>{t("heroImage")}</Label>
+                  {(customization.heroBackgroundImage as string) && (
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={customization.heroBackgroundImage as string}
+                        alt=""
+                        className="h-16 w-16 rounded object-cover"
+                      />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive"
+                        onClick={() => updateCustomization("heroBackgroundImage", "")}
+                      >
+                        &times;
+                      </Button>
+                    </div>
+                  )}
                   <Input
-                    value={(customization.dressCode as string) ?? ""}
-                    onChange={(e) =>
-                      updateCustomization("dressCode", e.target.value)
-                    }
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={(e) => handleSingleFileUpload(e, "image", "heroBackgroundImage")}
+                    disabled={uploading}
                   />
+                </div>
+              )}
+              {config.heroVideoSupport && (
+                <div className="space-y-2">
+                  <Label>{t("heroVideo")}</Label>
+                  {(customization.heroVideo as string) && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground truncate max-w-[200px]">
+                        {(customization.heroVideo as string).split("/").pop()}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive"
+                        onClick={() => updateCustomization("heroVideo", "")}
+                      >
+                        &times;
+                      </Button>
+                    </div>
+                  )}
+                  <Input
+                    type="file"
+                    accept="video/mp4,video/webm"
+                    onChange={(e) => handleSingleFileUpload(e, "video", "heroVideo")}
+                    disabled={uploading}
+                  />
+                </div>
+              )}
+              {config.sections.includes("timeline") && (
+                <div className="space-y-3">
+                  <Label>{t("timeline")}</Label>
+                  {timeline.map((item, index) => (
+                    <div key={index} className="space-y-2 rounded border p-3">
+                      <div className="grid grid-cols-2 gap-2">
+                        <Input
+                          value={item.time}
+                          onChange={(e) => updateTimelineItem(index, "time", e.target.value)}
+                          placeholder={t("timelineTime")}
+                        />
+                        <Input
+                          value={item.icon}
+                          onChange={(e) => updateTimelineItem(index, "icon", e.target.value)}
+                          placeholder={t("timelineIcon")}
+                        />
+                      </div>
+                      <Input
+                        value={item.title}
+                        onChange={(e) => updateTimelineItem(index, "title", e.target.value)}
+                        placeholder={t("timelineTitle")}
+                      />
+                      <Input
+                        value={item.description}
+                        onChange={(e) => updateTimelineItem(index, "description", e.target.value)}
+                        placeholder={t("timelineDesc")}
+                      />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive"
+                        onClick={() => removeTimelineItem(index)}
+                      >
+                        {t("removeItem")}
+                      </Button>
+                    </div>
+                  ))}
+                  <Button variant="outline" size="sm" onClick={addTimelineItem}>
+                    {t("addTimelineItem")}
+                  </Button>
                 </div>
               )}
               {config.fields.gift?.kaspiQr && (

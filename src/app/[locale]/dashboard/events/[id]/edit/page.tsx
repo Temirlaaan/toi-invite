@@ -48,6 +48,8 @@ export default async function EditEventPage({
         originalName: m.originalName,
       }))}
       locale={locale}
+      s3Endpoint={process.env.S3_ENDPOINT}
+      s3Bucket={process.env.S3_BUCKET}
     />
   );
 }

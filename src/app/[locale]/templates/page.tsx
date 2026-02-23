@@ -8,6 +8,8 @@ const EVENT_TYPE_KEYS: Record<EventType, string> = {
   WEDDING: "wedding",
   ANNIVERSARY: "anniversary",
   KIDS: "kids",
+  ENGAGEMENT: "engagement",
+  CORPORATE: "corporate",
 };
 
 const CATEGORY_VARIANT: Record<string, "default" | "secondary" | "outline"> = {
@@ -31,7 +33,7 @@ export default async function TemplatesPage({
     orderBy: { createdAt: "desc" },
   });
 
-  const filterTypes = ["all", "WEDDING", "ANNIVERSARY", "KIDS"] as const;
+  const filterTypes = ["all", "WEDDING", "ANNIVERSARY", "KIDS", "ENGAGEMENT", "CORPORATE"] as const;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
