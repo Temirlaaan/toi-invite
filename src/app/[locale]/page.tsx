@@ -71,7 +71,7 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <Link
               href="/templates"
-              className="text-sm text-muted-foreground hover:text-foreground"
+              className="hidden text-sm text-muted-foreground hover:text-foreground sm:block"
             >
               {tc("templates")}
             </Link>
@@ -92,7 +92,7 @@ export default function Home() {
       </header>
 
       {/* Hero */}
-      <section className="flex min-h-screen flex-col items-center justify-center px-4 pt-16 text-center">
+      <section className="flex flex-col items-center justify-center px-4 pb-16 pt-28 text-center sm:min-h-screen sm:pb-0 sm:pt-16">
         <div className="mx-auto max-w-3xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -152,7 +152,7 @@ export default function Home() {
           }}
         >
           <div
-            className="relative mx-auto w-[280px] rounded-[2.5rem] border-[6px] border-gray-900 bg-gray-900 p-2 shadow-2xl"
+            className="relative mx-auto w-[260px] rounded-[2.5rem] border-[6px] border-gray-900 bg-gray-900 p-2 shadow-2xl sm:w-[280px]"
             style={{
               transform: "rotateY(-5deg) rotateX(2deg)",
             }}
